@@ -2,7 +2,7 @@
 
 > Built by **NexGen Support** — Multi-Agent CrewAI System for Customer Support
 
-![SupportIQ](https://img.shields.io/badge/SupportIQ-Purple%20Merit%20Technologies-7B5CF5?style=for-the-badge)
+![SupportIQ](https://img.shields.io/badge/SupportIQ-NexGen%20Support-7B5CF5?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge)
 ![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge)
