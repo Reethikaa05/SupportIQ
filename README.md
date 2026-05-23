@@ -270,10 +270,6 @@ supportiq/
 - Add Slack/Zendesk webhook integration
 - Fine-tune retriever with domain-specific embeddings
 
----
 
-## Sources / Policy Attribution
 
-All policy documents are **synthetic** (authored for this assessment) and do not represent any real company's policies.
 
-Built for **NexGen Support** assessment — March 2026.
