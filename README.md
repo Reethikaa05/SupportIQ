@@ -37,42 +37,43 @@ SupportIQ features a decoupled, production-ready micro-architecture designed for
 
 ```mermaid
 graph TD
-    subgraph "Client Layer"
-        UI["💻 <b>React 18 + Vite Dashboard</b><br/><i>Interactive Charts, Real-Time Stats,<br/>Notification Drawer, Settings Control</i>"]
-        Axios["⚡ <b>Axios HTTP Client</b><br/><i>Automatic JWT Bearer Token Injection</i>"]
+    subgraph Client_Layer["Client Layer"]
+        UI["React 18 + Vite Dashboard"]
+        Axios["Axios HTTP Client"]
     end
 
-    subgraph "API & Security Layer"
-        API["🚀 <b>FastAPI Application Gateway</b><br/><i>CORS Middleware, OAuth2 / Bearer Guard</i>"]
-        AuthService["🔐 <b>JWT Authentication Engine</b><br/><i>Passlib Bcrypt Hashing, HS256 Tokens</i>"]
+    subgraph API_Layer["API & Security Layer"]
+        API["FastAPI Application Gateway"]
+        AuthService["JWT Authentication Engine"]
     end
 
-    subgraph "CrewAI Multi-Agent Resolution Pipeline"
-        Triage["🎯 <b>1. Triage Agent</b><br/>• Issue Categorization<br/>• Urgency & Confidence Scoring<br/>• Missing Context Detection"]
-        Retriever["🔍 <b>2. Policy Retriever Agent</b><br/>• Multi-Query Generation<br/>• Paragraph-Level Vector Search<br/>• Top-K Chunk Extraction"]
-        Writer["✍️ <b>3. Resolution Writer Agent</b><br/>• Grounded Evidence Analysis<br/>• Decision & Rationale Synthesis<br/>• Cited Response Generation"]
-        Compliance["🛡️ <b>4. Compliance & Safety Agent</b><br/>• Mandatory Citation Verifier<br/>• PCI / PII Regex Redaction<br/>• Fraud Signal Auto-Escalation"]
+    subgraph Agent_Pipeline["CrewAI Multi-Agent Pipeline"]
+        Triage["1. Triage Agent (Classification & Urgency)"]
+        Retriever["2. Policy Retriever Agent (Vector Search)"]
+        Writer["3. Resolution Writer Agent (Evidence Grounded)"]
+        Compliance["4. Compliance Agent (Safety & Citation Audit)"]
     end
 
-    subgraph "RAG Knowledge Repository"
-        VectorStore[("📚 <b>Policy Corpus (12 Docs)</b><br/>• Returns, Shipping, Warranties<br/>• Perishables, Fraud, Hygiene<br/>• Paragraph Section Index")]
+    subgraph Knowledge_Repository["Knowledge Repository"]
+        VectorStore[("Policy Corpus (12 Docs / 25k Words)")]
     end
 
-    subgraph "Data & Audit Store"
-        DB[("💾 <b>System Database</b><br/><i>In-Memory Store / PostgreSQL Audit Log</i>")]
+    subgraph Data_Store["Data & Audit Store"]
+        DB[("System Database & Audit Store")]
     end
 
     UI --> Axios
-    Axios -->|HTTP POST /api/tickets/resolve| API
-    API <-->|Validate Credentials| AuthService
+    Axios -->|POST /api/tickets/resolve| API
+    API -->|Validate Token| AuthService
+    AuthService -->|Token Authorized| API
     API --> Triage
     Triage -->|Classification + Context| Retriever
-    VectorStore <-->|Vector Retrieval| Retriever
+    Retriever <-->|Vector Retrieval| VectorStore
     Retriever -->|Policy Evidence Chunks| Writer
-    Writer -->|Draft Resolution Object| Compliance
+    Writer -->|Draft Resolution| Compliance
     Compliance -->|Passed / Sanitized Output| API
-    API -->|Persist Audit Trail| DB
-    API -->> UI: Return Structured JSON Response
+    API -->|Persist Audit Log| DB
+    API -->|JSON Resolution Payload| UI
 
     style UI fill:#EBF4FF,stroke:#3B82F6,stroke-width:2px
     style Axios fill:#EFF6FF,stroke:#2563EB,stroke-width:1.5px
@@ -93,44 +94,31 @@ graph TD
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Agent as Support Agent / Client App
-    participant FE as React Frontend (Vite)
-    participant API as FastAPI Backend
-    participant Auth as Auth Interceptor
-    participant Pipeline as Multi-Agent Crew
+    actor Agent as Support Agent
+    participant FE as React Frontend
+    participant API as FastAPI Gateway
+    participant Auth as JWT Auth Guard
+    participant Crew as Multi-Agent Crew Pipeline
     participant KB as Policy Knowledge Base
     participant DB as Audit Database
 
-    Agent->>FE: Submit Customer Ticket + Order Context
+    Agent->>FE: Submit Ticket & Order Context
     FE->>API: POST /api/tickets/resolve (Bearer Token)
-    API->>Auth: Verify JWT Token Signature
-    Auth-->>API: Authorized User Context
+    API->>Auth: Verify JWT Token
+    Auth-->>API: User Authorized
+    API->>Crew: Initiate Multi-Agent Resolution
 
-    rect rgb(245, 243, 255)
-        Note over Pipeline: Stage 1: Triage Agent
-        Pipeline->>Pipeline: Analyze ticket text & order metadata -> Output classification & urgency
-    end
+    Note over Crew: 1. Triage Agent: Issue Classification & Urgency
+    Note over Crew, KB: 2. Policy Retriever: Vector Search over 12 Docs
+    Crew->>KB: Query Paragraph Chunks
+    KB-->>Crew: Return Top-K Policy Passages
+    Note over Crew: 3. Resolution Writer: Evidence-Grounded Drafting
+    Note over Crew: 4. Compliance Agent: Safety, PII Redaction & Fraud Overrides
 
-    rect rgb(254, 243, 199)
-        Note over Pipeline, KB: Stage 2: Policy Retriever Agent
-        Pipeline->>KB: Query paragraph-level chunks for relevant policies
-        KB-->>Pipeline: Return Top-K grounded policy passages + metadata
-    end
-
-    rect rgb(236, 253, 245)
-        Note over Pipeline: Stage 3: Resolution Writer Agent
-        Pipeline->>Pipeline: Evaluate evidence -> Formulate decision (approve/deny/escalate) + citations
-    end
-
-    rect rgb(254, 226, 226)
-        Note over Pipeline: Stage 4: Compliance Agent
-        Pipeline->>Pipeline: Audit citation presence, scan for PII/PCI leakage, apply fraud overrides
-    end
-
-    Pipeline->>DB: Save Ticket Resolution & Agent Execution Log
-    Pipeline-->>API: Return Structured Resolution Payload
-    API-->>FE: HTTP 200 OK + Ticket JSON Payload
-    FE-->>Agent: Display Interactive Resolution, Citations & Status
+    Crew->>DB: Persist Execution Audit Record
+    Crew-->>API: Return Resolution Object
+    API-->>FE: Return JSON Response Payload
+    FE-->>Agent: Display Cited Resolution & Status
 ```
 
 ---
@@ -140,14 +128,14 @@ sequenceDiagram
 ```mermaid
 flowchart TD
     Start([Resolution Draft Generated]) --> Step1{Citations Present?}
-    Step1 -- No --> ForceEscalate["🚨 Force State: 'needs_escalation'<br/>Set Fallback Message"]
-    Step1 -- Yes --> Step2{Sensitive Data Detected?<br/><i>Credit Card, SSN, PII Regex</i>}
-    Step2 -- Yes --> Redact["✂️ Redact Sensitive Tokens<br/>Flag Security Audit Log"]
+    Step1 -- No --> ForceEscalate["Force State: 'needs_escalation'<br/>Set Fallback Message"]
+    Step1 -- Yes --> Step2{Sensitive Data Detected?<br/>PCI / PII Regex}
+    Step2 -- Yes --> Redact["Redact Sensitive Tokens<br/>Flag Audit Log"]
     Step2 -- No --> Step3{Fraud Pattern Detected?}
-    Step3 -- Yes --> OverrideFraud["⚠️ Override Decision: Escalated to Fraud Team"]
+    Step3 -- Yes --> OverrideFraud["Override Decision: Escalated to Fraud Team"]
     Step3 -- No --> Step4{Absolute Guarantees Written?}
-    Step4 -- Yes --> SoftenLanguage["✏️ Soften Guarantee Phrasing"]
-    Step4 -- No --> Approve([✅ Approved for Delivery])
+    Step4 -- Yes --> SoftenLanguage["Soften Guarantee Phrasing"]
+    Step4 -- No --> Approve([Approved for Delivery])
 
     ForceEscalate --> OutputResponse([Return Safe Resolution Payload])
     Redact --> Step3
