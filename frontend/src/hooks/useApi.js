@@ -1,31 +1,31 @@
 import axios from 'axios'
+import useAuthStore from '../store/authStore'
 
 const api = axios.create({
   baseURL: '/api',
   timeout: 60000,
 })
 
-// Inject auth token
+// Inject auth token directly from Zustand state
 api.interceptors.request.use((config) => {
   try {
-    const stored = localStorage.getItem('supportiq-auth')
-    if (stored) {
-      const { state } = JSON.parse(stored)
-      if (state?.token) {
-        config.headers.Authorization = `Bearer ${state.token}`
-      }
+    const token = useAuthStore.getState().token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
   } catch {}
   return config
 })
 
-// Handle 401
+// Handle 401 Unauthorized cleanly
 api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('supportiq-auth')
-      window.location.href = '/login'
+      useAuthStore.getState().logout()
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(err)
   }

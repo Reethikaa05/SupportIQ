@@ -8,6 +8,7 @@ import ResolveTicketPage from './pages/ResolveTicketPage'
 import TicketsPage from './pages/TicketsPage'
 import TicketDetailPage from './pages/TicketDetailPage'
 import AnalyticsPage from './pages/AnalyticsPage'
+import SettingsPage from './pages/SettingsPage'
 import Layout from './components/layout/Layout'
 
 function PrivateRoute({ children }) {
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="tickets" element={<TicketsPage />} />
           <Route path="tickets/:id" element={<TicketDetailPage />} />
           <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

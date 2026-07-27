@@ -151,6 +151,9 @@ class MockDatabase:
     
     def get_user_tickets(self, user_id: str) -> List[Dict]:
         user_tickets = [t for t in self.tickets if t.user_id == user_id]
+        if not user_tickets:
+            self._seed_demo_tickets(user_id)
+            user_tickets = [t for t in self.tickets if t.user_id == user_id]
         return [
             {
                 "id": t.id,
@@ -173,6 +176,9 @@ class MockDatabase:
     
     def get_dashboard_stats(self, user_id: str) -> Dict:
         user_tickets = [t for t in self.tickets if t.user_id == user_id]
+        if not user_tickets:
+            self._seed_demo_tickets(user_id)
+            user_tickets = [t for t in self.tickets if t.user_id == user_id]
         total = len(user_tickets)
         approved = sum(1 for t in user_tickets if t.result.get("decision") == "approve")
         denied = sum(1 for t in user_tickets if t.result.get("decision") == "deny")
@@ -195,6 +201,9 @@ class MockDatabase:
     
     def get_recent_activity(self, user_id: str) -> List[Dict]:
         user_tickets = [t for t in self.tickets if t.user_id == user_id]
+        if not user_tickets:
+            self._seed_demo_tickets(user_id)
+            user_tickets = [t for t in self.tickets if t.user_id == user_id]
         return [
             {
                 "id": t.id,
