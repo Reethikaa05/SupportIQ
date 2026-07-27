@@ -3,15 +3,24 @@
 <div align="center">
 
 ![SupportIQ Banner](https://img.shields.io/badge/SupportIQ-Multi--Agent%20Resolution%20Engine-7B5CF5?style=for-the-badge&logo=openai&logoColor=white)
+![Frontend Status](https://img.shields.io/badge/Frontend-Vercel%20Live-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Backend Status](https://img.shields.io/badge/Backend-Render%20Live-46E3B7?style=for-the-badge&logo=render&logoColor=black)
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115.6-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-6.0.3-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![CrewAI](https://img.shields.io/badge/CrewAI-Orchestrated-FF4B4B?style=for-the-badge)
 
 *An enterprise-grade, policy-grounded, multi-agent AI system for autonomous e-commerce customer support resolution.*
 
-[Overview](#-overview) • [System Architecture](#-system-architecture) • [Multi-Agent Pipeline](#-multi-agent-crew-pipeline) • [Policy Base](#-policy-knowledge-base) • [API Reference](#-api-reference) • [Getting Started](#-getting-started)
+### 🌐 Live Production Links
+
+| Service | Production URL | Platform |
+| :--- | :--- | :---: |
+| **Frontend Web App** | [https://support-iq-lyart.vercel.app](https://support-iq-lyart.vercel.app/) | **Vercel** |
+| **Backend API** | [https://supportiq-b567.onrender.com](https://supportiq-b567.onrender.com) | **Render** |
+| **API Documentation** | [https://supportiq-b567.onrender.com/docs](https://supportiq-b567.onrender.com/docs) | **Swagger OpenAPI** |
+
+[Live App](https://support-iq-lyart.vercel.app/) • [API Docs](https://supportiq-b567.onrender.com/docs) • [System Architecture](#-system-architecture) • [Multi-Agent Pipeline](#-multi-agent-crew-pipeline) • [Policy Base](#-policy-knowledge-base)
 
 </div>
 
