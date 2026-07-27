@@ -274,11 +274,61 @@ npm run dev
 
 ---
 
+## 🚢 Production Deployment Guide
+
+SupportIQ is designed to be easily deployed to popular cloud platforms or containerized servers.
+
+### Method 1: Containerized Deployment (Docker & Docker Compose)
+
+The repository includes pre-configured Dockerfiles for both frontend and backend services alongside a `docker-compose.yml` manifest.
+
+```bash
+# Clone the repository
+git clone https://github.com/Reethikaa05/SupportIQ.git
+cd SupportIQ
+
+# Build and start both containers with 1 command
+docker compose up --build -d
+```
+- **Frontend App**: `http://localhost:5173`
+- **Backend API**: `http://localhost:8000`
+
+---
+
+### Method 2: Free Cloud Deployment (Vercel + Render)
+
+#### 1. Deploy Backend to [Render.com](https://render.com) (Free Tier)
+1. Create a new **Web Service** on Render connected to your GitHub repository `Reethikaa05/SupportIQ`.
+2. Set **Root Directory**: `backend`
+3. Set **Environment**: `Python 3`
+4. Set **Build Command**: `pip install -r requirements.txt`
+5. Set **Start Command**: `python main.py` or `uvicorn main:app --host 0.0.0.0 --port $PORT`
+6. Add Environment Variable:
+   - `HUGGINGFACE_API_TOKEN` = `your_token_here`
+7. Click **Deploy**. Note your live API URL (e.g. `https://supportiq-backend.onrender.com`).
+
+#### 2. Deploy Frontend to [Vercel.com](https://vercel.com) (Free Tier)
+1. Create a new project on Vercel connected to `Reethikaa05/SupportIQ`.
+2. Set **Framework Preset**: `Vite`
+3. Set **Root Directory**: `frontend`
+4. Click **Deploy**.
+5. Add a `vercel.json` rewrite in `frontend/` if needed for API routing.
+
+---
+
+### Method 3: Unified Deployment on [Railway.app](https://railway.app)
+1. Create a new project on Railway.
+2. Select **Deploy from GitHub repo** and connect `Reethikaa05/SupportIQ`.
+3. Railway will automatically detect `docker-compose.yml` and deploy both frontend and backend services seamlessly.
+
+---
+
 ## 📁 Repository Structure
 
 ```
 supportiq/
 ├── 📂 backend/
+│   ├── 📄 Dockerfile                 # Container image definition for FastAPI
 │   ├── 📄 main.py                    # FastAPI application, CORS & JWT Router
 │   ├── 📄 requirements.txt           # Python dependencies
 │   ├── 📂 agents/
@@ -288,6 +338,8 @@ supportiq/
 │       └── 📄 mock_db.py             # Thread-safe database store with auto-seeding
 │
 ├── 📂 frontend/
+│   ├── 📄 Dockerfile                 # Multi-stage Dockerfile with NGINX
+│   ├── 📄 nginx.conf                 # NGINX reverse-proxy configuration
 │   ├── 📂 src/
 │   │   ├── 📂 components/            # Layout, Navigation & Notifications
 │   │   ├── 📂 pages/                 # Dashboard, Resolve, History, Analytics, Settings
@@ -297,6 +349,7 @@ supportiq/
 │   ├── 📄 vite.config.js
 │   └── 📄 package.json
 │
+├── 📄 docker-compose.yml             # 1-click full-stack orchestrator manifest
 └── 📄 README.md                      # Project documentation
 ```
 
